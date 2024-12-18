@@ -3,7 +3,7 @@
 #
 # This is my first wonderful project.
 #
-# new line from cloud
+# change line locally
 
 import streamlit as st
 from PIL import Image
