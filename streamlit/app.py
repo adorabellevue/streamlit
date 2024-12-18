@@ -2,8 +2,6 @@
 # new line locally
 #
 # This is my first wonderful project.
-#
-# new line from cloud
 
 import streamlit as st
 from PIL import Image
