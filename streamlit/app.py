@@ -1,5 +1,5 @@
 #
-# This is my first streamlit project.
+# This is my first wonderful project.
 #
 
 import streamlit as st
