@@ -1,3 +1,7 @@
+#
+# This is my first streamlit project.
+#
+
 import streamlit as st
 from PIL import Image
 import io
