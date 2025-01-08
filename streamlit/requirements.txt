@@ -1,3 +1,7 @@
 openai
 panda
 streamlit
+Pillow
+opencv-python
+numpy
+dlib
