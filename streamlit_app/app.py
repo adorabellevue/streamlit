@@ -10,25 +10,32 @@ st.set_page_config(page_title="Streamlit Sidebar Example", layout="wide")
 st.title("My Website")
 
 # Tabs
-face, sketch, tts = st.tabs(["Face Recognition", "Convert to Sketch", "Text-to-speech"])
+face, sketch, tts = st.tabs(["Face Recognition", "Image-to-Sketch", "Text-to-Speech"])
 
 def detect_faces(img_data):
-    gray_img = cv2.cvtColor(np.frombuffer(img_data, np.uint8), cv2.COLOR_RGB2BGR)
-    # gray_img = cv2.normalize(gray_img, None, 0, 255, cv2.NORM_MINMAX, dtype=cv2.CV_8U)
+    npimg = np.frombuffer(img_data, np.uint8)
+    img = cv2.imdecode(npimg, cv2.IMREAD_COLOR)
+
+    if img is None:
+        st.error("Failed to load image")
+        return None
+
+    # Convert to grayscale
+    gray_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
     # Load pre-trained face detection model
-    face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
+    face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_profileface.xml')
 
-    # Detect faces
-    faces = face_cascade.detectMultiScale(gray_img, scaleFactor=1.1, minNeighbors=5)
+    # Detect faces (with adjustable parameters)
+    faces = face_cascade.detectMultiScale(gray_img, scaleFactor=1.05, minNeighbors=8, minSize=(30,30))
 
-    print(faces)
+    st.write(f"Found {len(faces)} faces")
 
-    # Draw rectangles around the faces
+    # Draw rectangles around the faces on original image
     for (x, y, w, h) in faces:
-        cv2.rectangle(img_data, (x, y), (x+w, y+h), (255, 0, 0), 2)
+        cv2.rectangle(img, (x, y), (x + w, y + h), (0, 255, 0), 2)
 
-    return img_data
+    return img
 
 # Face recognition tab
 with face:
@@ -42,7 +49,7 @@ with face:
             with col1:
                 st.image(Image.open(io.BytesIO(img_data)), caption="Original Photo", use_container_width=True)
             with col2:
-                st.image(processed_img, caption="Detected Faces", use_container_width=True)
+                st.image(cv2.cvtColor(processed_img, cv2.COLOR_BGR2RGB), caption="Detected Faces", use_container_width=True)
 
 def convert_to_sketch(image):
     gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
